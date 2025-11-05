@@ -1,0 +1,39 @@
+Category,Value,Question,Answer
+Cryptography,200,This cipher shifts letters by a fixed number in the alphabet.,Caesar Cipher
+Cryptography,400,This symmetric encryption standard is widely used in web traffic.,AES
+Cryptography,600,This hashing algorithm produces a 160-bit hash.,SHA-1
+Cryptography,800,This algorithm is commonly used for public key encryption.,RSA
+Cryptography,1000,This attack attempts to decrypt passwords by trying all possible combinations.,Brute Force
+,,,
+Networking,200,This protocol is used to securely transfer files over SSH.,SFTP
+Networking,400,This type of attack floods a server with more traffic than it can handle.,DDoS
+Networking,600,This layer of the OSI model handles routing between networks.,Network Layer
+Networking,800,This protocol resolves domain names to IP addresses.,DNS
+Networking,1000,This tool is commonly used to capture network packets for analysis.,Wireshark
+,,,
+Vulnerabilities,200,This flaw allows attackers to inject malicious SQL code into a database.,SQL Injection
+Vulnerabilities,400,This attack tricks users into giving sensitive info by pretending to be a trusted entity.,Phishing
+Vulnerabilities,600,This type of vulnerability occurs when user input is improperly sanitized in web apps.,XSS
+Vulnerabilities,800,This vulnerability can allow attackers to execute arbitrary code due to memory mismanagement.,Buffer Overflow
+Vulnerabilities,1000,This technique tricks users into clicking a disguised malicious link.,Clickjacking
+,,,
+Malware,200,This type of malware demands ransom to restore access to files.,Ransomware
+Malware,400,This malware replicates itself to spread to other systems.,Worm
+Malware,600,This malware hides within legitimate programs to perform malicious actions.,Trojan
+Malware,800,This type of software logs keystrokes to steal sensitive information.,Keylogger
+Malware,1000,This malware encrypts a computer's data and demands payment for the decryption key.,CryptoLocker
+,,,
+Ethical Hacking,200,This type of hacking is performed with permission to find security weaknesses.,Penetration Testing
+Ethical Hacking,400,This tool is commonly used to scan for open ports on a network.,Nmap
+Ethical Hacking,600,This process involves sending fake emails to test employees’ security awareness.,Phishing Simulation
+Ethical Hacking,800,This standard outlines ethical rules for hackers performing security testing.,EC-Council Code of Ethics
+Ethical Hacking,1000,This framework is widely used to model attack paths during a penetration test.,MITRE ATT&CK
+,,,
+Security Policies,200,This policy determines who can access which resources within an organization.,Access Control Policy
+Security Policies,400,This practice requires users to change passwords periodically.,Password Policy
+Security Policies,600,This policy defines acceptable use of corporate IT resources.,Acceptable Use Policy
+Security Policies,800,This policy ensures sensitive information is backed up and recoverable.,Data Backup Policy
+Security Policies,1000,This document outlines how an organization will respond to security incidents.,Incident Response Policy
+,,,
+# FinalJeopardy,,,
+Frameworks,0,"This cybersecurity framework uses the identify,  protect, dectect, respond, and recover steps",NIST Cybersecurity Framework
