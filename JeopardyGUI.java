@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,17 +15,17 @@ import java.util.Comparator;
 public class JeopardyGUI {
     private JFrame frame;
     private JPanel boardPanel, scorePanel;
-    private Map<String, List<Clue>> byCategory = new LinkedHashMap<>();
-    private List<String> categoryOrder = new ArrayList<>();
-    private List<Clue> allClues = new ArrayList<>();
-    private Contestant[] contestants = new Contestant[3];
+    private final Map<String, List<Clue>> byCategory = new LinkedHashMap<>();
+    private final List<String> categoryOrder = new ArrayList<>();
+    private final List<Clue>  allClues= new ArrayList<>();
+    private final Contestant[] contestants = new Contestant[3];
     private Clue finalJeopardyClue = null;
-    private Random rand = new Random();
+    private final Random rand = new Random();
 
     // Colors and fonts
-    private Color darkBlue = new Color(0, 0, 128);
-    private Color gold = new Color(255, 215, 0);
-    private Color highlightBlue = new Color(30, 30, 60);
+    private final Color darkBlue = new Color(0, 0, 128);
+    private final Color gold = new Color(255, 215, 0);
+    private final Color highlightBlue = new Color(30, 30, 60);
 
     private Font getGameFont(int size, boolean bold) {
         int style = bold ? Font.BOLD : Font.PLAIN;
@@ -127,16 +128,16 @@ public class JeopardyGUI {
 
         // Top buttons
         JButton fjBtn = createGameButton("Final Jeopardy", 18, null, null);
-        fjBtn.addActionListener(e -> {
+        fjBtn.addActionListener(_ -> {
             int confirm = JOptionPane.showConfirmDialog(frame, "Move to Final Jeopardy?", "Confirm", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) showFinalJeopardyCategorySlide();
         });
 
         JButton adjustBtn = createGameButton("Adjust Score", 18, null, null);
-        adjustBtn.addActionListener(e -> adjustScoreDialog());
+        adjustBtn.addActionListener(_ -> adjustScoreDialog());
 
         JButton newGameBtn = createGameButton("New Game", 18, null, null);
-        newGameBtn.addActionListener(e -> {
+        newGameBtn.addActionListener(_ -> {
             int confirm = JOptionPane.showConfirmDialog(frame,
                     "Start a new game? All scores and board progress will be reset.",
                     "Confirm Reset", JOptionPane.YES_NO_OPTION);
@@ -228,7 +229,7 @@ public class JeopardyGUI {
         allClues.clear();
         finalJeopardyClue = null;
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             String line;
             boolean inFinal = false;
             while ((line = br.readLine()) != null) {
@@ -260,7 +261,7 @@ public class JeopardyGUI {
             }
         }
         for (var cat : categoryOrder)
-            byCategory.get(cat).sort((c1,c2) -> Integer.compare(c1.value,c2.value));
+            byCategory.get(cat).sort(Comparator.comparingInt(c -> c.value));
     }
 
     private void assignDailyDouble() {
@@ -340,7 +341,7 @@ public class JeopardyGUI {
                         }
                     });
 
-                    btn.addActionListener(e -> showClue(clue, btn));
+                    btn.addActionListener(_ -> showClue(clue, btn));
                     grid.add(btn);
                 } else {
                     JPanel empty = new JPanel();
@@ -394,7 +395,7 @@ public class JeopardyGUI {
         frame.repaint();
 
         // Show splash briefly before showing contestant buttons inline
-        javax.swing.Timer ddTimer = new javax.swing.Timer(1500, e -> {
+        javax.swing.Timer ddTimer = new javax.swing.Timer(1500, _ -> {
             // Transition into the inline contestant chooser version of the clue screen
             showDailyDoubleInlineChooser(clue);
         });
@@ -418,13 +419,13 @@ public class JeopardyGUI {
         for (Contestant c : contestants) {
             JButton cBtn = new JButton(c.name);
             cBtn.setFont(new Font("SansSerif", Font.BOLD, 22));
-            cBtn.addActionListener(e -> handleDailyDoubleWager(clue, c));
+            cBtn.addActionListener(_ -> handleDailyDoubleWager(clue, c));
             bottomPanel.add(cBtn);
         }
 
         JButton cancelBtn = new JButton("Cancel");
         cancelBtn.setFont(new Font("SansSerif", Font.BOLD, 22));
-        cancelBtn.addActionListener(e -> backToBoard());
+        cancelBtn.addActionListener(_ -> backToBoard());
         bottomPanel.add(cancelBtn);
 
         questionPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -440,7 +441,7 @@ public class JeopardyGUI {
                 c.name + ", enter your wager (0–" + c.score + "):",
                 "Daily Double Wager", JOptionPane.PLAIN_MESSAGE);
 
-        int wager = 0;
+        int wager;
         try {
             wager = Integer.parseInt(wagerStr.trim());
             wager = Math.max(0, Math.min(wager, Math.max(1000, c.score)));
@@ -473,14 +474,14 @@ public class JeopardyGUI {
         // If this is a Daily Double question for a specific contestant
         if (dailyDoubleContestant != null) {
             JButton correctBtn = createGameButton("Correct", 22, new Color(34, 177, 76), Color.WHITE); // green
-            correctBtn.addActionListener(e -> {
+            correctBtn.addActionListener(_ -> {
                 dailyDoubleContestant.score += clue.value;
                 updateScoreLabels();
                 showAnswerScreen(clue);
             });
 
             JButton incorrectBtn = createGameButton("Incorrect", 22, new Color(200, 0, 0), Color.WHITE); // red
-            incorrectBtn.addActionListener(e -> {
+            incorrectBtn.addActionListener(_ -> {
                 dailyDoubleContestant.score -= clue.value;
                 updateScoreLabels();
                 showAnswerScreen(clue);
@@ -491,10 +492,10 @@ public class JeopardyGUI {
         } else {
             // Normal question flow (Buzz In / No Buzz)
             JButton buzzBtn = createGameButton("Buzz In", 22, null, null);
-            buzzBtn.addActionListener(e -> showBuzzOptions(clue, questionPanel));
+            buzzBtn.addActionListener(_ -> showBuzzOptions(clue, questionPanel));
 
             JButton noBuzzBtn = createGameButton("No Buzz", 22, null, null);
-            noBuzzBtn.addActionListener(e -> backToBoard());
+            noBuzzBtn.addActionListener(_ -> backToBoard());
 
             bottomPanel.add(buzzBtn);
             bottomPanel.add(noBuzzBtn);
@@ -514,11 +515,11 @@ public class JeopardyGUI {
 
         JButton buzzBtn = new JButton("Buzz In");
         buzzBtn.setFont(new Font("SansSerif", Font.BOLD, 22));
-        buzzBtn.addActionListener(e -> showBuzzOptions(clue, questionPanel));
+        buzzBtn.addActionListener(_ -> showBuzzOptions(clue, questionPanel));
 
         JButton noBuzzBtn = new JButton("No Buzz");
         noBuzzBtn.setFont(new Font("SansSerif", Font.BOLD, 22));
-        noBuzzBtn.addActionListener(e -> backToBoard());
+        noBuzzBtn.addActionListener(_ -> backToBoard());
 
         bottomPanel.add(buzzBtn);
         bottomPanel.add(noBuzzBtn);
@@ -533,13 +534,13 @@ public class JeopardyGUI {
         // Add a button for each contestant, using same style helper
         for (Contestant c : contestants) {
             JButton cBtn = createGameButton(c.name, 22, null, null);
-            cBtn.addActionListener(e -> handleAnswerAttempt(clue, c, questionPanel));
+            cBtn.addActionListener(_ -> handleAnswerAttempt(clue, c, questionPanel));
             bottomPanel.add(cBtn);
         }
 
         // Add Cancel button (same look)
         JButton cancelBtn = createGameButton("Cancel", 22, null, null);
-        cancelBtn.addActionListener(e -> {
+        cancelBtn.addActionListener(_ -> {
             // Restore the Buzz/No Buzz bar cleanly
             removeSouthComponent(questionPanel);
             JPanel newBottom = createBuzzBar(clue, questionPanel);
@@ -582,14 +583,14 @@ public class JeopardyGUI {
         JButton passBtn = createGameButton("Pass", 16, null, null);
 
         // Correct: award points, show answer screen
-        correctBtn.addActionListener(ev -> {
+        correctBtn.addActionListener(_ -> {
             c.score += clue.value;
             updateScoreLabels();
             showAnswerScreen(clue);
         });
 
         // Incorrect: deduct points, return to same question (allow other contestants to buzz)
-        incorrectBtn.addActionListener(ev -> {
+        incorrectBtn.addActionListener(_ -> {
             c.score -= clue.value;
             updateScoreLabels();
             // Re-display the same question so others can buzz in
@@ -597,7 +598,7 @@ public class JeopardyGUI {
         });
 
         // Pass/Cancel: return to the original Buzz/No Buzz bar
-        passBtn.addActionListener(ev -> {
+        passBtn.addActionListener(_ -> {
             // Recreate the Buzz/No Buzz bar in the questionPanel
             JPanel newBottom = createBuzzBar(clue, questionPanel);
             // remove current bottom component (the confirmBar) and add the original bottom
@@ -633,7 +634,7 @@ public class JeopardyGUI {
         frame.revalidate();
         frame.repaint();
 
-        javax.swing.Timer backTimer = new javax.swing.Timer(2000, e -> {
+        javax.swing.Timer backTimer = new javax.swing.Timer(2000, _ -> {
             backToBoard();
             if (allClues.stream().allMatch(c -> c.asked))
                 showWinnerOverlay();
@@ -653,7 +654,7 @@ public class JeopardyGUI {
         frame.setContentPane(winnerPanel);
         frame.revalidate();
         frame.repaint();
-        new javax.swing.Timer(3000, e -> backToBoard()).start();
+        new javax.swing.Timer(3000, _ -> backToBoard()).start();
     }
 
     private Contestant chooseContestantDialog(String prompt) {
@@ -700,7 +701,7 @@ public class JeopardyGUI {
         // Ready button
         JButton readyBtn = new JButton("Ready");
         readyBtn.setFont(new Font("SansSerif", Font.BOLD, 28));
-        readyBtn.addActionListener(e -> showFinalJeopardyQuestion());
+        readyBtn.addActionListener(_ -> showFinalJeopardyQuestion());
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(darkBlue);
         bottomPanel.add(readyBtn);
@@ -727,7 +728,7 @@ public class JeopardyGUI {
 
         JButton readyBtn = new JButton("Ready");
         readyBtn.setFont(new Font("SansSerif", Font.BOLD, 22));
-        readyBtn.addActionListener(e -> handleFinalJeopardyAnswers());
+        readyBtn.addActionListener(_ -> handleFinalJeopardyAnswers());
 
         bottomPanel.add(readyBtn);
         finalPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -764,7 +765,7 @@ public class JeopardyGUI {
                     JOptionPane.PLAIN_MESSAGE
             );
 
-            int wager = 0;
+            int wager;
             try {
                 wager = Integer.parseInt(input.trim());
                 wager = Math.max(0, Math.min(wager, c.score));
@@ -799,7 +800,7 @@ public class JeopardyGUI {
 
             {
                 // Timer for slow shimmer effect
-                new javax.swing.Timer(80, e -> {
+                new javax.swing.Timer(80, _ -> {
                     shimmerPhase += 0.01f;
                     if (shimmerPhase > 1f) shimmerPhase = 0f;
                     repaint();
@@ -875,7 +876,7 @@ public class JeopardyGUI {
         // Step-by-step reveal effect
         Timer revealTimer = new Timer(900, null);
         final int[] step = {0};
-        revealTimer.addActionListener(e -> {
+        revealTimer.addActionListener(_ -> {
             if (step[0] < scoresPanel.getComponentCount()) {
                 Component comp = scoresPanel.getComponent(step[0]);
                 comp.setVisible(true);
@@ -995,7 +996,7 @@ public class JeopardyGUI {
 
         Timer t = new Timer(20, null);
         final float[] alpha = {0f};
-        t.addActionListener(e -> {
+        t.addActionListener(_ -> {
             alpha[0] += 0.05f;
             if (alpha[0] >= 1f) {
                 frame.setContentPane(newPanel);
